@@ -11,7 +11,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">CAS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -30,17 +30,41 @@
                             <li><a class="dropdown-item" href="#">Privacy</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Login","UserCrd")">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
+
+
 
                 </ul>
+
             </div>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                IBM07Feb2024_FormsAuthAspMVC5.Models.CurrentUserModel usr = Session["CurrentUser"] as IBM07Feb2024_FormsAuthAspMVC5.Models.CurrentUserModel;
+
+                <div class="d-flex" role="search">
+                    <span>Welcome, <span class="badge text-bg-primary"> @(usr.FirstName + " " + usr.LastName) </span> <span class="badge text-bg-primary"><a class="btn btn-primary" href="@Url.Action("Logout","UserCrd")">Logout</a></span>
+                    </span>
+                    
+                   
+                </div>
+
+                @*<li class="nav-item">
+                    <p> Hello @usr.FirstName  @usr.LastName <a class="nav-link" href="@Url.Action("Logout","UserCrd")">Logout</a></p>
+                </li>*@
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Login","UserCrd")">Login</a>
+                </li>
+            }
+
+
         </div>
     </nav>
+
+
+    @RenderSection("NavBarMenu",false) 
 
     <div class="container body-content">
         @RenderBody()

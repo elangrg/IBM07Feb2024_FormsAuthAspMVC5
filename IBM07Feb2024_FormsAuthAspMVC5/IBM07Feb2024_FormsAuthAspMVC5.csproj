@@ -122,6 +122,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infra\RoleProvider.cs" />
+    <Compile Include="Models\CASCurrentUser.cs" />
     <Compile Include="Models\CredModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -136,6 +137,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CredModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Patient.cs">
+      <DependentUpon>CredModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Physician.cs">
+      <DependentUpon>CredModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserCred.cs">
       <DependentUpon>CredModel.tt</DependentUpon>
@@ -160,6 +167,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Admin\AddNewPhysician.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Shared\_LayoutPhysician.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

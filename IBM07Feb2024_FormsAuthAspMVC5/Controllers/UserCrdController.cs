@@ -31,6 +31,21 @@ namespace IBM07Feb2024_FormsAuthAspMVC5.Controllers
                 if (usr!=null)
                 {
                     FormsAuthentication.SetAuthCookie(usr.UserName, false);
+                    CurrentUserModel cusr = new CurrentUserModel();
+                    cusr.UserName = usr.UserName;
+                   cusr.ReferenceToId=usr.ReferenceToId;
+                    cusr.UserID=usr.UserID; 
+                    cusr.Role = usr.Role;
+
+                    if (usr.Role== "PHYSICIAN") {
+
+                        cusr.FirstName = _db.Physicians.Find(usr.ReferenceToId).FirstName;
+                        cusr.LastName = _db.Physicians.Find(usr.ReferenceToId).LastName;
+                    }
+
+
+
+                    Session["CurrentUser"]= cusr;
                     return RedirectToAction("Index", usr.Role);
                 }
             }

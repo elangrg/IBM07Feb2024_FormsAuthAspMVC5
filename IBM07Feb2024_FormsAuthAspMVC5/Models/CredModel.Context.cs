@@ -26,5 +26,7 @@ namespace IBM07Feb2024_FormsAuthAspMVC5.Models
         }
     
         public virtual DbSet<UserCred> UserCreds { get; set; }
+        public virtual DbSet<Patient> Patients { get; set; }
+        public virtual DbSet<Physician> Physicians { get; set; }
     }
 }

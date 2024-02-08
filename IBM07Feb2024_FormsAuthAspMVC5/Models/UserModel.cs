@@ -12,4 +12,15 @@ namespace IBM07Feb2024_FormsAuthAspMVC5.Models
         [Required]
         public string Password { get; set; }
     }
+    public class CurrentUserModel
+    {
+        public int UserID { get; set; }
+        public string UserName { get; set; }
+
+        public string Role { get; set; }
+        public int? ReferenceToId { get; set; }
+        public string FirstName { get; set; }
+       
+        public string LastName { get; set; }
+    }
 }
