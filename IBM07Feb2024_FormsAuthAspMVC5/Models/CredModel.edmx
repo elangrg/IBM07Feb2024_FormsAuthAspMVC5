@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="CredentialDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Drug">
+          <Key>
+            <PropertyRef Name="DrugID" />
+          </Key>
+          <Property Name="DrugID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DrugName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ShortNote" Type="varchar" MaxLength="150" Nullable="false" />
+        </EntityType>
         <EntityType Name="Patient">
           <Key>
             <PropertyRef Name="PatientID" />
@@ -21,6 +29,33 @@
           <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="PurchaseOrderHeader">
+          <Key>
+            <PropertyRef Name="PurchaseOrderID" />
+          </Key>
+          <Property Name="PurchaseOrderID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PODate" Type="date" />
+          <Property Name="SupplierID" Type="int" Nullable="false" />
+          <Property Name="Note" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="PurchaseOrderProductLine">
+          <Key>
+            <PropertyRef Name="PurchaseOrderPrdLineID" />
+          </Key>
+          <Property Name="PurchaseOrderPrdLineID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PurchaseOrderID" Type="int" Nullable="false" />
+          <Property Name="DrugID" Type="int" Nullable="false" />
+          <Property Name="Qty" Type="int" Nullable="false" />
+          <Property Name="ShortNote" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Supplier">
+          <Key>
+            <PropertyRef Name="SupplierID" />
+          </Key>
+          <Property Name="SupplierID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserCred">
           <Key>
             <PropertyRef Name="UserID" />
@@ -31,10 +66,62 @@
           <Property Name="Role" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="ReferenceToId" Type="int" />
         </EntityType>
+        <Association Name="FK_PurchaseOrder_ToSupplier">
+          <End Role="Supplier" Type="Self.Supplier" Multiplicity="1" />
+          <End Role="PurchaseOrderHeader" Type="Self.PurchaseOrderHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderHeader">
+              <PropertyRef Name="SupplierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PurchaseOrderProductLine_Drug">
+          <End Role="Drug" Type="Self.Drug" Multiplicity="1" />
+          <End Role="PurchaseOrderProductLine" Type="Self.PurchaseOrderProductLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Drug">
+              <PropertyRef Name="DrugID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderProductLine">
+              <PropertyRef Name="DrugID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PurchaseOrderProductLine_PoHeader">
+          <End Role="PurchaseOrderHeader" Type="Self.PurchaseOrderHeader" Multiplicity="1" />
+          <End Role="PurchaseOrderProductLine" Type="Self.PurchaseOrderProductLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PurchaseOrderHeader">
+              <PropertyRef Name="PurchaseOrderID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderProductLine">
+              <PropertyRef Name="PurchaseOrderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="CredentialDbModelStoreContainer">
+          <EntitySet Name="Drug" EntityType="Self.Drug" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Patient" EntityType="Self.Patient" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Physician" EntityType="Self.Physician" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PurchaseOrderHeader" EntityType="Self.PurchaseOrderHeader" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PurchaseOrderProductLine" EntityType="Self.PurchaseOrderProductLine" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Supplier" EntityType="Self.Supplier" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserCred" EntityType="Self.UserCred" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_PurchaseOrder_ToSupplier" Association="Self.FK_PurchaseOrder_ToSupplier">
+            <End Role="Supplier" EntitySet="Supplier" />
+            <End Role="PurchaseOrderHeader" EntitySet="PurchaseOrderHeader" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PurchaseOrderProductLine_Drug" Association="Self.FK_PurchaseOrderProductLine_Drug">
+            <End Role="Drug" EntitySet="Drug" />
+            <End Role="PurchaseOrderProductLine" EntitySet="PurchaseOrderProductLine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PurchaseOrderProductLine_PoHeader" Association="Self.FK_PurchaseOrderProductLine_PoHeader">
+            <End Role="PurchaseOrderHeader" EntitySet="PurchaseOrderHeader" />
+            <End Role="PurchaseOrderProductLine" EntitySet="PurchaseOrderProductLine" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -44,6 +131,22 @@
           <EntitySet Name="UserCreds" EntityType="CredentialDbModel.UserCred" />
           <EntitySet Name="Patients" EntityType="CredentialDbModel.Patient" />
           <EntitySet Name="Physicians" EntityType="CredentialDbModel.Physician" />
+          <EntitySet Name="Drugs" EntityType="CredentialDbModel.Drug" />
+          <EntitySet Name="PurchaseOrderHeaders" EntityType="CredentialDbModel.PurchaseOrderHeader" />
+          <EntitySet Name="PurchaseOrderProductLines" EntityType="CredentialDbModel.PurchaseOrderProductLine" />
+          <EntitySet Name="Suppliers" EntityType="CredentialDbModel.Supplier" />
+          <AssociationSet Name="FK_PurchaseOrderProductLine_Drug" Association="CredentialDbModel.FK_PurchaseOrderProductLine_Drug">
+            <End Role="Drug" EntitySet="Drugs" />
+            <End Role="PurchaseOrderProductLine" EntitySet="PurchaseOrderProductLines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PurchaseOrder_ToSupplier" Association="CredentialDbModel.FK_PurchaseOrder_ToSupplier">
+            <End Role="Supplier" EntitySet="Suppliers" />
+            <End Role="PurchaseOrderHeader" EntitySet="PurchaseOrderHeaders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PurchaseOrderProductLine_PoHeader" Association="CredentialDbModel.FK_PurchaseOrderProductLine_PoHeader">
+            <End Role="PurchaseOrderHeader" EntitySet="PurchaseOrderHeaders" />
+            <End Role="PurchaseOrderProductLine" EntitySet="PurchaseOrderProductLines" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="UserCred">
           <Key>
@@ -71,6 +174,83 @@
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Drug">
+          <Key>
+            <PropertyRef Name="DrugID" />
+          </Key>
+          <Property Name="DrugID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DrugName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShortNote" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PurchaseOrderProductLines" Relationship="CredentialDbModel.FK_PurchaseOrderProductLine_Drug" FromRole="Drug" ToRole="PurchaseOrderProductLine" />
+        </EntityType>
+        <EntityType Name="PurchaseOrderHeader">
+          <Key>
+            <PropertyRef Name="PurchaseOrderID" />
+          </Key>
+          <Property Name="PurchaseOrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PODate" Type="DateTime" Precision="0" />
+          <Property Name="SupplierID" Type="Int32" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplier" Relationship="CredentialDbModel.FK_PurchaseOrder_ToSupplier" FromRole="PurchaseOrderHeader" ToRole="Supplier" />
+          <NavigationProperty Name="PurchaseOrderProductLines" Relationship="CredentialDbModel.FK_PurchaseOrderProductLine_PoHeader" FromRole="PurchaseOrderHeader" ToRole="PurchaseOrderProductLine" />
+        </EntityType>
+        <EntityType Name="PurchaseOrderProductLine">
+          <Key>
+            <PropertyRef Name="PurchaseOrderPrdLineID" />
+          </Key>
+          <Property Name="PurchaseOrderPrdLineID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PurchaseOrderID" Type="Int32" Nullable="false" />
+          <Property Name="DrugID" Type="Int32" Nullable="false" />
+          <Property Name="Qty" Type="Int32" Nullable="false" />
+          <Property Name="ShortNote" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Drug" Relationship="CredentialDbModel.FK_PurchaseOrderProductLine_Drug" FromRole="PurchaseOrderProductLine" ToRole="Drug" />
+          <NavigationProperty Name="PurchaseOrderHeader" Relationship="CredentialDbModel.FK_PurchaseOrderProductLine_PoHeader" FromRole="PurchaseOrderProductLine" ToRole="PurchaseOrderHeader" />
+        </EntityType>
+        <EntityType Name="Supplier">
+          <Key>
+            <PropertyRef Name="SupplierID" />
+          </Key>
+          <Property Name="SupplierID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PurchaseOrderHeaders" Relationship="CredentialDbModel.FK_PurchaseOrder_ToSupplier" FromRole="Supplier" ToRole="PurchaseOrderHeader" />
+        </EntityType>
+        <Association Name="FK_PurchaseOrderProductLine_Drug">
+          <End Type="CredentialDbModel.Drug" Role="Drug" Multiplicity="1" />
+          <End Type="CredentialDbModel.PurchaseOrderProductLine" Role="PurchaseOrderProductLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Drug">
+              <PropertyRef Name="DrugID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderProductLine">
+              <PropertyRef Name="DrugID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PurchaseOrder_ToSupplier">
+          <End Type="CredentialDbModel.Supplier" Role="Supplier" Multiplicity="1" />
+          <End Type="CredentialDbModel.PurchaseOrderHeader" Role="PurchaseOrderHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderHeader">
+              <PropertyRef Name="SupplierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PurchaseOrderProductLine_PoHeader">
+          <End Type="CredentialDbModel.PurchaseOrderHeader" Role="PurchaseOrderHeader" Multiplicity="1" />
+          <End Type="CredentialDbModel.PurchaseOrderProductLine" Role="PurchaseOrderProductLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PurchaseOrderHeader">
+              <PropertyRef Name="PurchaseOrderID" />
+            </Principal>
+            <Dependent Role="PurchaseOrderProductLine">
+              <PropertyRef Name="PurchaseOrderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -103,6 +283,45 @@
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="PhysicianID" ColumnName="PhysicianID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Drugs">
+            <EntityTypeMapping TypeName="CredentialDbModel.Drug">
+              <MappingFragment StoreEntitySet="Drug">
+                <ScalarProperty Name="ShortNote" ColumnName="ShortNote" />
+                <ScalarProperty Name="DrugName" ColumnName="DrugName" />
+                <ScalarProperty Name="DrugID" ColumnName="DrugID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PurchaseOrderHeaders">
+            <EntityTypeMapping TypeName="CredentialDbModel.PurchaseOrderHeader">
+              <MappingFragment StoreEntitySet="PurchaseOrderHeader">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+                <ScalarProperty Name="PODate" ColumnName="PODate" />
+                <ScalarProperty Name="PurchaseOrderID" ColumnName="PurchaseOrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PurchaseOrderProductLines">
+            <EntityTypeMapping TypeName="CredentialDbModel.PurchaseOrderProductLine">
+              <MappingFragment StoreEntitySet="PurchaseOrderProductLine">
+                <ScalarProperty Name="ShortNote" ColumnName="ShortNote" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="DrugID" ColumnName="DrugID" />
+                <ScalarProperty Name="PurchaseOrderID" ColumnName="PurchaseOrderID" />
+                <ScalarProperty Name="PurchaseOrderPrdLineID" ColumnName="PurchaseOrderPrdLineID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Suppliers">
+            <EntityTypeMapping TypeName="CredentialDbModel.Supplier">
+              <MappingFragment StoreEntitySet="Supplier">
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

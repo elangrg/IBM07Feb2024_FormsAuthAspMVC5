@@ -1,0 +1,246 @@
+﻿@model IBM07Feb2024_FormsAuthAspMVC5.Models.POViewModel
+
+@{
+    ViewBag.Title = "PlacePurchaseOrder";
+
+
+    List<IBM07Feb2024_FormsAuthAspMVC5.Models.DrugModel> lstdrg = ViewBag.DrugDataList as List<IBM07Feb2024_FormsAuthAspMVC5.Models.DrugModel>;
+
+
+
+}
+
+<h2>PlacePurchaseOrder</h2>
+
+
+
+<div class="container text-center">
+    @using (Html.BeginForm())
+    {
+
+
+
+
+        <input list="dlstDrugs" id="txtDrugName" name="dDrugName" />
+        <datalist id="dlstDrugs">
+
+
+
+
+
+            @foreach (var item in lstdrg)
+            {
+                <option value="@item.DrugName"> </option>
+            }
+
+
+
+
+        </datalist>
+
+
+
+        <h4>PurchaseOrderHeader</h4>
+        <hr />
+
+        <div class="row">
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.POHeader.PODate, htmlAttributes: new { @class = "control-label col-md-2"  })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.POHeader.PODate, new { htmlAttributes = new { @class = "form-control", id = "txtPODate" } })
+                        @Html.ValidationMessageFor(model => model.POHeader.PODate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.POHeader.SupplierID, "SupplierID", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("SupplierID", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.POHeader.SupplierID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.POHeader.Note, htmlAttributes: new { @class = "form-label" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.POHeader.Note, new { htmlAttributes = new { @class = "form-control" ,id="txtNote"} })
+                        @Html.ValidationMessageFor(model => model.POHeader.Note, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.LabelFor(model => model.POProductLine.Drug, htmlAttributes: new { @class = "form-label" })
+                    </th>
+                    <th>
+                        @Html.LabelFor(model => model.POProductLine.Qty, htmlAttributes: new { @class = "form-label" })
+                    </th>
+                    <th>
+                        @Html.LabelFor(model => model.POProductLine.ShortNote, htmlAttributes: new { @class = "form-label" })
+                    </th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody id="tblPrdLineCnt">
+                <tr>
+                    <td>
+                        @Html.DropDownList("DrugID", null, htmlAttributes: new { @class = "form-control", id = "rowCmbDrugID" })
+                    </td>
+                    <td>
+                        @Html.EditorFor(model => model.POProductLine.Qty, new { htmlAttributes = new { @class = "form-control", id = "rowtxtQty" } })
+                    </td>
+                    <td>
+                        @Html.EditorFor(model => model.POHeader.Note, new { htmlAttributes = new { @class = "form-control", id = "rowtxtNote" } })
+                    </td>
+                    <td>
+                        <button id="btnSave" class="btn btn-primary">Save</button>
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                    </td>
+
+                </tr>
+
+
+
+
+            </tbody>
+        </table>
+
+
+
+
+
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="btnSavePO" type="submit" value="Create" class="btn btn-default" />
+
+                </div>
+            </div>
+        </div>
+
+
+
+    }
+
+
+</div>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<script src="~/Scripts/jquery-1.8.0.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+/// <reference path="Scripts/jquery-3.5.0.js" />
+<script>
+
+    var ctr = 0
+
+
+    $(function () {
+
+
+        $("#btnSave").click(function (e) {
+
+            e.preventDefault()
+
+            ctr++
+            var row = `<tr row=${ctr} id="rw${ctr}" +  drgid=${$("#rowCmbDrugID :selected").text()}  qty=${$("#rowtxtQty").val()} note="${$("#rowtxtNote").val()}"  >
+    <td>
+      ${$("#rowCmbDrugID :selected").text()}
+      
+<input type="hidden" name="POProductLines[${ctr-1}].DrugID" value="${$("#rowCmbDrugID :selected").val()}" />
+    </td>
+    <td>
+        ${$("#rowtxtQty").val()}
+        <input type="hidden" name="POProductLines[${ctr - 1}].Qty" value="${$("#rowtxtQty").val()}" />
+
+    </td>
+    <td>
+         ${$("#rowtxtNote").val()}
+         <input type="hidden" name="POProductLines[${ctr - 1}].ShortNote" value="${$("#rowtxtNote").val()}" />
+
+    </td>
+     <td>
+     
+ </td>
+
+</tr>`
+            $("#tblPrdLineCnt").append(row)
+
+        })
+
+
+
+        $("#btnCancel").click(function (e) {
+         
+
+            alert("c");
+
+        })
+
+        @*$("#btnSavePO").click(function (e) {
+
+            e.preventDefault()
+
+
+
+
+
+            $.post("@Url.Action("PlacePurchaseOrder", "Physician")",
+                {
+                    POHeader: {
+
+                        PODate: "12-dec-2024",
+                        SupplierID: 19999,
+                        Note: "some Note"
+
+                    },
+                    POProductLines: [{
+                        DrugID: 7777,
+                        Qty: 2222,
+                        ShortNote: "Note2222"
+                    }, {
+                            DrugID: 3333,
+                            Qty: 3333,
+                            ShortNote: "Note3332"
+                        }]
+
+
+                },
+                function (data, status) {
+                    alert("Data: " + data + "\nStatus: " + status);
+                });
+
+
+
+            $("tr").each(function (index) {
+
+                if (index>1) {
+                    alert($(this).attr("note"));
+                }
+
+             
+            });
+
+            alert($("#rw2").attr("note"));
+
+
+        })*@
+
+    })
+
+</script>

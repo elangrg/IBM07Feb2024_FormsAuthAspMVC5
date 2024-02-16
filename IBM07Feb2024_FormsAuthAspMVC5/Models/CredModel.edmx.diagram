@@ -8,6 +8,13 @@
         <EntityTypeShape EntityType="CredentialDbModel.UserCred" Width="1.5" PointX="1" PointY="2.625" />
         <EntityTypeShape EntityType="CredentialDbModel.Patient" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="CredentialDbModel.Physician" Width="1.5" PointX="3.375" PointY="3.75" />
+        <EntityTypeShape EntityType="CredentialDbModel.Drug" Width="1.5" PointX="7.625" PointY="5.25" />
+        <EntityTypeShape EntityType="CredentialDbModel.PurchaseOrderHeader" Width="1.5" PointX="7.625" PointY="1" />
+        <EntityTypeShape EntityType="CredentialDbModel.PurchaseOrderProductLine" Width="1.5" PointX="9.875" PointY="1" />
+        <EntityTypeShape EntityType="CredentialDbModel.Supplier" Width="1.5" PointX="5.375" PointY="1.25" />
+        <AssociationConnector Association="CredentialDbModel.FK_PurchaseOrderProductLine_Drug" />
+        <AssociationConnector Association="CredentialDbModel.FK_PurchaseOrder_ToSupplier" />
+        <AssociationConnector Association="CredentialDbModel.FK_PurchaseOrderProductLine_PoHeader" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

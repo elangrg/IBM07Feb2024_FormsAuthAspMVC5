@@ -1,0 +1,51 @@
+﻿@model IEnumerable<IBM07Feb2024_FormsAuthAspMVC5.Models.PurchaseOrderProductLine>
+
+@{
+    ViewBag.Title = "PlacePurchaseOrderindex";
+}
+
+<h2>PlacePurchaseOrderindex</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Qty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShortNote)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Drug.DrugName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseOrderHeader.Note)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Qty)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ShortNote)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Drug.DrugName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseOrderHeader.Note)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.PurchaseOrderPrdLineID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.PurchaseOrderPrdLineID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PurchaseOrderPrdLineID })
+        </td>
+    </tr>
+}
+
+</table>
